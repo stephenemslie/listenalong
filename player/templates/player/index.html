@@ -1,4 +1,4 @@
 {% extends "player/base.html" %}
 {% block content %}
-    <a href="{% url "social:disconnect" "spotify" %}">Log out</a>
+    <a href="{% url "player-views-logout" %}">Log out {{ user.username }}</a>
 {% endblock %}
