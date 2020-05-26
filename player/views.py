@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView
+from django.views.generic import DetailView
+from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 
 from .models import Room
@@ -20,8 +21,13 @@ def logout_view(request):
     return redirect(index)
 
 
-@method_decorator(login_required, name='dispatch')
-class RoomCreateView(CreateView):
+@login_required
+@require_http_methods(['POST'])
+def room_create_view(request):
+    room = Room.objects.create(user=request.user)
+    redirect('room-detail', slug=room.slug)
+
+
+class RoomDetailView(DetailView):
 
     model = Room
-
