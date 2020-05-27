@@ -2,7 +2,7 @@ import string
 from random import SystemRandom
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 
 def generate_room_slug():
@@ -10,6 +10,9 @@ def generate_room_slug():
     chars = string.ascii_uppercase + string.digits
     return "".join(choice(chars) for i in range(6))
 
+
+class User(AbstractUser):
+    pass
 
 class Room(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
