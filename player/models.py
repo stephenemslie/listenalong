@@ -12,10 +12,12 @@ def generate_room_slug():
 
 
 class User(AbstractUser):
-    pass
+
+    room = models.ForeignKey(
+        'Room', on_delete=models.PROTECT, blank=True, null=True)
+    room_owner = models.BooleanField(default=False)
 
 class Room(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField(default=generate_room_slug)
 
     def __str__(self):
