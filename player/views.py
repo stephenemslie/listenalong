@@ -42,6 +42,15 @@ def room_join_view(request, slug):
     return redirect('room-detail', slug=room.slug)
 
 
+@login_required
+def room_leave_view(request):
+    user = request.user
+    user.room = None
+    user.room_owner = False
+    user.save()
+    return redirect('index')
+
+
 class RoomDetailView(DetailView):
 
     model = Room
