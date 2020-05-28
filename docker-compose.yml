@@ -9,3 +9,9 @@ services:
       - "80:8000"
     environment:
       PYTHONBREAKPOINT: ipdb.set_trace
+  scheduler:
+    init: true
+    build: .
+    volumes:
+      - .:/usr/src/app
+    command: scheduler
