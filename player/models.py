@@ -45,3 +45,7 @@ class Room(models.Model):
     def __str__(self):
         return f'{self.slug}'
 
+    @property
+    def owner(self):
+        return self.user_set.get(room_owner=True)
+
