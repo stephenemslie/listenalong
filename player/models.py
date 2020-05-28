@@ -56,6 +56,17 @@ class User(AbstractUser):
             return False
         return True
 
+    def spotify_sync(self):
+        """Sync this user's player with their room"""
+        room = self.room
+        progress_ms = room.adjust_progress()
+        spotify = tk.Spotify(self.get_spotify_token())
+        spotify.playback_start_context(
+            room.context_uri,
+            room.item_id,
+            progress_ms
+        )
+
 
 class Room(models.Model):
     slug = models.SlugField(default=generate_room_slug)
