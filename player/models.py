@@ -29,6 +29,18 @@ class User(AbstractUser):
 class Room(models.Model):
     slug = models.SlugField(default=generate_room_slug)
 
+    timestamp = models.DateTimeField(blank=True, null=True)
+
+    is_playing = models.BooleanField(default=False)
+    progress_ms = models.FloatField(blank=True, null=True)
+
+    context_uri = models.TextField(blank=True, null=True)
+    context_type = models.TextField(blank=True, null=True)
+
+    item_id = models.TextField(blank=True, null=True)
+    item_uri = models.TextField(blank=True, null=True)
+    item_name = models.TextField(blank=True, null=True)
+
     def __str__(self):
         return f'{self.slug} ({self.user.username})'
 
