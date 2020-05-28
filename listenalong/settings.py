@@ -136,3 +136,4 @@ SOCIAL_AUTH_SPOTIFY_SCOPE = [
     'user-read-currently-playing',
     'playlist-read-collaborative'
 ]
+SOCIAL_AUTH_SPOTIFY_GET_ALL_EXTRA_DATA = True
