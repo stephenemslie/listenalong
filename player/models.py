@@ -49,3 +49,12 @@ class Room(models.Model):
     def owner(self):
         return self.user_set.get(room_owner=True)
 
+    def adjust_progress(self):
+        """Return room's adjusted progress, in milliseconds.
+
+        progress_ms is adjusted for the time elapsed since last sync.
+        """
+        # TODO: if adjusted_progress_ms > track length, adjust into next track
+        elapsed = time.time() * 1000 - self.timestamp.timestamp() * 1000
+        return self.progress_ms + elapsed + 1000
+
