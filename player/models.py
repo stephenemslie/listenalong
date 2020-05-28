@@ -17,6 +17,15 @@ class User(AbstractUser):
         'Room', on_delete=models.PROTECT, blank=True, null=True)
     room_owner = models.BooleanField(default=False)
 
+    def get_spotify_token(self):
+        social_user = self.social_auth.get(provider='spotify')
+        expires = social_user.extra_data['auth_time'] + \
+            social_user.extra_data['expires_in']
+        if expires <= int(time.time()):
+            social_user.refresh_token(load_strategy())
+            social_user.save()
+        return social_user.access_token
+
 class Room(models.Model):
     slug = models.SlugField(default=generate_room_slug)
 
