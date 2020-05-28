@@ -51,6 +51,7 @@ def room_leave_view(request):
     return redirect('index')
 
 
+@method_decorator(login_required, name='dispatch')
 class RoomDetailView(DetailView):
 
     model = Room
