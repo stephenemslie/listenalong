@@ -23,8 +23,12 @@ def logout_view(request):
 
 @login_required
 def room_create_view(request):
+    user = request.user
     room = Room.objects.create(user=request.user)
-    redirect('room-detail', slug=room.slug)
+    user.room = room
+    user.room_owner = True
+    user.save()
+    return redirect('room-detail', slug=room.slug)
 
 
 class RoomDetailView(DetailView):
