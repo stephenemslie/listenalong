@@ -31,6 +31,31 @@ class User(AbstractUser):
             social_user.save()
         return social_user.access_token
 
+    def spotify_is_active(self, threshold=5):
+        """Return True if the user should be considered active.
+
+        An active user:
+         - has an active device
+         - is currently playing the room's context
+         - has progress_ms within threshold seconds of  room's progress_ms
+        """
+        spotify = tk.Spotify(self.get_spotify_token())
+        playing = spotify.playback_currently_playing()
+        room = self.room
+        if playing is None:
+            return False
+        if playing.is_playing is False:
+            return False
+        if playing.context is None:
+            return False
+        if playing.context.uri != room.context_uri:
+            return False
+        if playing.item.uri != room.item_uri:
+            return False
+        if abs(playing.progress_ms - room.progress_ms) > threshold:
+            return False
+        return True
+
 
 class Room(models.Model):
     slug = models.SlugField(default=generate_room_slug)
