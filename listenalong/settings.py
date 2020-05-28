@@ -3,7 +3,8 @@ import environ
 
 env = environ.Env(
     DEBUG=(bool, False),
-    ALLOWED_HOSTS=(list, '127.0.0.1')
+    ALLOWED_HOSTS=(list, '127.0.0.1'),
+    SPOTIFY_POLLING_INTERVAL_SECONDS=(int, 15)
 )
 
 environ.Env.read_env('/usr/src/app/.env')
@@ -138,3 +139,7 @@ SOCIAL_AUTH_SPOTIFY_SCOPE = [
     'playlist-read-collaborative'
 ]
 SOCIAL_AUTH_SPOTIFY_GET_ALL_EXTRA_DATA = True
+
+# Player app specific
+
+SPOTIFY_POLLING_INTERVAL_SECONDS = env('SPOTIFY_POLLING_INTERVAL_SECONDS', 15)
