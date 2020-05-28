@@ -130,3 +130,9 @@ AUTHENTICATION_BACKENDS = [
 
 SOCIAL_AUTH_SPOTIFY_KEY = env('SOCIAL_AUTH_SPOTIFY_KEY')
 SOCIAL_AUTH_SPOTIFY_SECRET = env('SOCIAL_AUTH_SPOTIFY_SECRET')
+SOCIAL_AUTH_SPOTIFY_SCOPE = [
+    'user-read-playback-state',
+    'user-modify-playback-state',
+    'user-read-currently-playing',
+    'playlist-read-collaborative'
+]
