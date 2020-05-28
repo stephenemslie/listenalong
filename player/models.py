@@ -58,3 +58,21 @@ class Room(models.Model):
         elapsed = time.time() * 1000 - self.timestamp.timestamp() * 1000
         return self.progress_ms + elapsed + 1000
 
+    def update_progress(self):
+        spotify = tk.Spotify(self.owner.get_spotify_token())
+        self.timestamp = timezone.now()
+        playing = spotify.playback_currently_playing()
+        if playing is None or playing.context is None:
+            return
+
+        self.is_playing = playing.is_playing
+        self.progress_ms = playing.progress_ms
+
+        self.item_id = playing.item.id
+        self.item_uri = playing.item.uri
+        self.item_name = playing.item.name
+
+        self.context_uri = playing.context.uri
+        self.context_type = playing.context.type.value
+        self.save()
+
