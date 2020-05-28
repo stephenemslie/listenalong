@@ -1,4 +1,4 @@
 {% extends "player/base.html" %}
 {% block content %}
-    <a href="{% url "player-views-logout" %}">Log out {{ user.username }}</a>
+    <a href="{% url "player-views-logout" %}">Log out {{ user.get_full_name }}</a>
 {% endblock %}
