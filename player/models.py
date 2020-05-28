@@ -43,5 +43,5 @@ class Room(models.Model):
     item_name = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f'{self.slug} ({self.user.username})'
+        return f'{self.slug}'
 
