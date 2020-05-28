@@ -31,6 +31,17 @@ def room_create_view(request):
     return redirect('room-detail', slug=room.slug)
 
 
+@login_required
+def room_join_view(request, slug):
+    room = Room.objects.get(slug=slug)
+    user = request.user
+    user.room = room
+    user.room_owner = False
+    user.save()
+    user.spotify_sync()
+    return redirect('room-detail', slug=room.slug)
+
+
 class RoomDetailView(DetailView):
 
     model = Room

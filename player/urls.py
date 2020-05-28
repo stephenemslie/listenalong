@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     path('', views.index),
     path('rooms/', views.room_create_view, name='room-create'),
+    path('rooms/<slug:slug>/join/', views.room_join_view, name='room-join'),
     path('rooms/<slug:slug>/',
          views.RoomDetailView.as_view(),
          name='room-detail'),
