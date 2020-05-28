@@ -31,6 +31,16 @@ class User(AbstractUser):
             social_user.save()
         return social_user.access_token
 
+    def get_device(self):
+        spotify = tk.Spotify(self.get_spotify_token())
+        devices = spotify.playback_devices()
+        if len(devices) == 0:
+            return None
+        for device in devices:
+            if device['is_active']:
+                return device
+        return devices[0]
+
     def spotify_is_active(self, threshold=5):
         """Return True if the user should be considered active.
 
