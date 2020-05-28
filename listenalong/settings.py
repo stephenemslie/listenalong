@@ -2,8 +2,8 @@ import os
 import environ
 
 env = environ.Env(
- DEBUG=(bool, False),
- ALLOWED_HOSTS=(list, '127.0.0.1')
+    DEBUG=(bool, False),
+    ALLOWED_HOSTS=(list, '127.0.0.1')
 )
 
 environ.Env.read_env('/usr/src/app/.env')
