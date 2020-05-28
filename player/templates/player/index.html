@@ -1,4 +1,8 @@
 {% extends "player/base.html" %}
 {% block content %}
     <a href="{% url "player-views-logout" %}">Log out {{ user.get_full_name }}</a>
+    <form action="{% url 'room-create' %}" method="POST">
+        <button type="submit">Start a session</button>
+        {% csrf_token %}
+    </form>
 {% endblock %}
