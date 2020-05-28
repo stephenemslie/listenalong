@@ -1,9 +1,13 @@
 import time
 import string
+
 from random import SystemRandom
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from social_django.utils import load_strategy
+from django.utils import timezone
+import tekore as tk
 
 
 def generate_room_slug():
@@ -26,6 +30,7 @@ class User(AbstractUser):
             social_user.refresh_token(load_strategy())
             social_user.save()
         return social_user.access_token
+
 
 class Room(models.Model):
     slug = models.SlugField(default=generate_room_slug)
@@ -75,4 +80,3 @@ class Room(models.Model):
         self.context_uri = playing.context.uri
         self.context_type = playing.context.type.value
         self.save()
-
