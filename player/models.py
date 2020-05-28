@@ -116,3 +116,9 @@ class Room(models.Model):
         self.context_uri = playing.context.uri
         self.context_type = playing.context.type.value
         self.save()
+
+    def drop_inactive_members(self):
+        for user in self.user_set.filter(room_owner=False):
+            if not user.spotify_is_active():
+                user.room = None
+                user.save()
