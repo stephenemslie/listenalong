@@ -22,7 +22,6 @@ def logout_view(request):
 
 
 @login_required
-@require_http_methods(['POST'])
 def room_create_view(request):
     room = Room.objects.create(user=request.user)
     redirect('room-detail', slug=room.slug)
