@@ -62,7 +62,10 @@ class User(AbstractUser):
 
     def spotify_disable_shuffle(self, device_id=None):
         spotify = tk.Spotify(self.get_spotify_token())
-        spotify.playback_shuffle(False, device_id)
+        try:
+            spotify.playback_shuffle(False, device_id)
+        except tk.client.decor.error.Forbidden:
+            pass
 
     def spotify_is_active(self, threshold=5):
         """Return True if the user should be considered active.
