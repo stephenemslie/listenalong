@@ -97,3 +97,17 @@ class UserTestCase(TestCase):
         user.save()
         device_id = Spotify().playback_devices()[0].id
         Spotify().playback_shuffle.assert_called_once_with(False, device_id)
+
+
+class RoomTestCase(TestCase):
+
+    @patch.object(Room, 'update_progress')
+    @patch.object(tekore, 'Spotify')
+    def test_update_on_create(self, Spotify, update_progress):
+        Spotify().currently_playing.return_value = SpotifyPlayingFactory()
+        user = UserFactory()
+        room = RoomFactory()
+        user.room = room
+        user.room_owner = True
+        user.save()
+        update_progress.assert_called_once()
