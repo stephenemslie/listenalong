@@ -85,15 +85,15 @@ class SpotifyPlayingFactory(factory.Factory):
 
 class UserTestCase(TestCase):
 
-    @patch.object(tekore.Spotify, 'playback_shuffle')
-    @patch.object(tekore.Spotify, 'playback_devices')
-    def test_disable_shuffle_on_own(self, playback_devices, playback_shuffle):
+    @patch.object(tekore, 'Spotify')
+    def test_disable_shuffle_on_own(self, Spotify):
         """Test that owner's shuffle is disabled when they create a room."""
-        playback_devices.return_value = [MagicMock()]
+        Spotify().playback_devices.return_value = [MagicMock()]
+        Spotify().playback_currently_playing.return_value = SpotifyPlayingFactory()
         user = UserFactory()
         room = RoomFactory()
         user.room = room
         user.room_owner = True
         user.save()
-        device_id = playback_devices()[0].id
-        playback_shuffle.assert_called_once_with(False, device_id)
+        device_id = Spotify().playback_devices()[0].id
+        Spotify().playback_shuffle.assert_called_once_with(False, device_id)
