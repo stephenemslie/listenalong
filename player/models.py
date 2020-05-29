@@ -22,6 +22,21 @@ class User(AbstractUser):
         'Room', on_delete=models.PROTECT, blank=True, null=True)
     room_owner = models.BooleanField(default=False)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._original_room = self.room
+
+    def save(self, *args, **kwargs):
+        # User is taking ownership of a new room
+        if self.room and self.room_owner and self._original_room != self.room:
+            device_id = self.get_device()
+            self.spotify_disable_shuffle(device_id)
+            super().save(*args, **kwargs)
+            self._original_room = self.room
+            self.room.update_progress()
+        else:
+            super().save(*args, **kwargs)
+
     def get_spotify_token(self):
         social_user = self.social_auth.get(provider='spotify')
         expires = social_user.extra_data['auth_time'] + \
