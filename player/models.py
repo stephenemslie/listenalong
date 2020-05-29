@@ -93,6 +93,8 @@ class User(AbstractUser):
         """Sync this user's player with their room"""
         room = self.room
         progress_ms = room.adjust_progress()
+        device_id = self.get_device()
+        self.spotify_disable_shuffle(device_id)
         spotify = tk.Spotify(self.get_spotify_token())
         spotify.playback_start_context(
             room.context_uri,
