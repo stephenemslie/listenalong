@@ -99,7 +99,8 @@ class User(AbstractUser):
         spotify.playback_start_context(
             room.context_uri,
             room.item_id,
-            progress_ms
+            progress_ms,
+            device_id=device_id
         )
 
 
