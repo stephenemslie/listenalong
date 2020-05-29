@@ -5,6 +5,7 @@ from random import SystemRandom
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
 from social_django.utils import load_strategy
 from django.utils import timezone
 import tekore as tk
