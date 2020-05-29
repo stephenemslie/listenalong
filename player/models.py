@@ -60,6 +60,10 @@ class User(AbstractUser):
                 return device.id
         return devices[0].id
 
+    def spotify_disable_shuffle(self, device_id=None):
+        spotify = tk.Spotify(self.get_spotify_token())
+        spotify.playback_shuffle(False, device_id)
+
     def spotify_is_active(self, threshold=5):
         """Return True if the user should be considered active.
 
