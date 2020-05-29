@@ -54,8 +54,11 @@ class User(AbstractUser):
             return None
         for device in devices:
             if device.is_active:
-                return device
-        return devices[0]
+                return device.id
+        for device in devices:
+            if device.type.name == 'Smartphone':
+                return device.id
+        return devices[0].id
 
     def spotify_is_active(self, threshold=5):
         """Return True if the user should be considered active.
