@@ -132,12 +132,25 @@ class Room(models.Model):
         elapsed = time.time() * 1000 - self.timestamp.timestamp() * 1000
         return self.progress_ms + elapsed + 1000
 
+    def resync_needed(self, playing, threshold=None):
+        threshold = threshold or settings.SPOTIFY_POLLING_INTERVAL_SECONDS
+        track_change = self.item_uri != playing.item.uri
+        ms_from_duration = self.item_duration_ms - self.adjust_progress()
+        if track_change and ms_from_duration > threshold * 1000:
+            return True
+        return False
+
     def update_progress(self):
         spotify = tk.Spotify(self.owner.get_spotify_token())
         self.timestamp = timezone.now()
         playing = spotify.playback_currently_playing()
         if playing is None or playing.context is None:
             return
+
+        # only check for a resync if we've updated before
+        resync_needed = False
+        if self.progress_ms:
+            resync_needed = self.resync_needed(playing)
 
         self.is_playing = playing.is_playing
         self.progress_ms = playing.progress_ms
@@ -150,6 +163,8 @@ class Room(models.Model):
         self.context_uri = playing.context.uri
         self.context_type = playing.context.type.value
         self.save()
+
+        return resync_needed
 
     def sync_members(self):
         for user in self.user_set.filter(room_owner=False):

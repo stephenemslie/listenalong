@@ -14,8 +14,10 @@ class Command(BaseCommand):
         rooms = Room.objects.filter(user__room_owner=True)
         print(f'Updating {rooms.count()} rooms')
         for room in rooms:
-            room.update_progress()
+            resync_needed = room.update_progress()
             room.drop_inactive_members()
+            if resync_needed:
+                room.sync_members()
 
     def handle(self, *args, **options):
         count_seconds = settings.SPOTIFY_POLLING_INTERVAL_SECONDS
