@@ -153,6 +153,10 @@ class Room(models.Model):
         self.context_type = playing.context.type.value
         self.save()
 
+    def sync_members(self):
+        for user in self.user_set.filter(room_owner=False):
+            user.spotify_sync()
+
     def drop_inactive_members(self):
         for user in self.user_set.filter(room_owner=False):
             if not user.spotify_is_active():
