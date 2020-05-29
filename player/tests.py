@@ -62,6 +62,7 @@ class SpotifyItemFactory(factory.Factory):
 
     id = factory.Faker('uuid4')
     uri = factory.Faker('uuid4')
+    duration_ms = 2 * 60 * 1000  # 2 mintes in ms
     _name = factory.Faker('pystr')
 
     # MagicMock reserves `name` for the constructor, so we need to set it post
