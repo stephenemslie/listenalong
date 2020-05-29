@@ -160,3 +160,4 @@ class Room(models.Model):
             if not user.spotify_is_active():
                 user.room = None
                 user.save()
+                print(f'Dropped {user.get_full_name()} from {self.slug}')
