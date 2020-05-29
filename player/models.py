@@ -4,6 +4,7 @@ import string
 from random import SystemRandom
 
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
 from social_django.utils import load_strategy
