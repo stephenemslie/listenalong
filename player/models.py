@@ -114,6 +114,7 @@ class Room(models.Model):
     item_id = models.TextField(blank=True, null=True)
     item_uri = models.TextField(blank=True, null=True)
     item_name = models.TextField(blank=True, null=True)
+    item_duration_ms = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.slug}'
@@ -144,6 +145,7 @@ class Room(models.Model):
         self.item_id = playing.item.id
         self.item_uri = playing.item.uri
         self.item_name = playing.item.name
+        self.item_duration_ms = playing.item.duration_ms
 
         self.context_uri = playing.context.uri
         self.context_type = playing.context.type.value
