@@ -77,18 +77,11 @@ class User(AbstractUser):
         """
         spotify = tk.Spotify(self.get_spotify_token())
         playing = spotify.playback_currently_playing()
-        room = self.room
         if playing is None:
             return False
         if playing.is_playing is False:
             return False
         if playing.context is None:
-            return False
-        if playing.context.uri != room.context_uri:
-            return False
-        if playing.item.uri != room.item_uri:
-            return False
-        if abs(playing.progress_ms - room.progress_ms) > threshold:
             return False
         return True
 
