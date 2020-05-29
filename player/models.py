@@ -53,7 +53,7 @@ class User(AbstractUser):
         if len(devices) == 0:
             return None
         for device in devices:
-            if device['is_active']:
+            if device.is_active:
                 return device
         return devices[0]
 
