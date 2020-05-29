@@ -34,6 +34,8 @@ class RoomFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = 'player.Room'
 
+    progress_ms = 5000
+    timestamp = factory.LazyAttribute(lambda a: timezone.now())
 
 class UserTestCase(TestCase):
 
@@ -43,10 +45,7 @@ class UserTestCase(TestCase):
         """Test that owner's shuffle is disabled when they create a room."""
         playback_devices.return_value = [MagicMock()]
         user = UserFactory()
-        room = RoomFactory(
-            progress_ms=5000,
-            timestamp=timezone.now()
-        )
+        room = RoomFactory()
         user.room = room
         user.room_owner = True
         user.save()
