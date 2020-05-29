@@ -12,6 +12,7 @@ psycopg2-binary = "^2.8.5"
 django-environ = "^0.4.5"
 tekore = "^1.7.0"
 schedule = "^0.6.0"
+serverless-wsgi = "^1.7.4"
 
 [tool.poetry.dev-dependencies]
 ipython = "^7.14.0"
