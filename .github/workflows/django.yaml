@@ -12,7 +12,8 @@ jobs:
       - name: checkout source code
         uses: actions/checkout@v1
       - uses: dschep/install-poetry-action@v1.3
-      - run: |
+      - name: zip package
+        run: |
         zip -r9 package.zip .  -x ".git/*" -x "terraform/*" -x "package/*"
         poetry export -r requirements.txt -o requirements.txt
         pip install --target=./package -r requirements.txt
