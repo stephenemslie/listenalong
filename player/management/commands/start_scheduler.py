@@ -23,6 +23,7 @@ class Command(BaseCommand):
         count_seconds = settings.SPOTIFY_POLLING_INTERVAL_SECONDS
         schedule.every(count_seconds).seconds.do(self.update_rooms)
         print(f'Updating rooms every {count_seconds} seconds')
+        self.update_rooms()
         while True:
             schedule.run_pending()
             time.sleep(1)
