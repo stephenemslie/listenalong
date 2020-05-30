@@ -14,12 +14,7 @@ jobs:
       - name: install poetry
         uses: dschep/install-poetry-action@v1.3
       - name: zip package
-        run: |
-        zip -r9 package.zip .  -x ".git/*" -x "terraform/*" -x "package/*"
-        poetry export -f requirements.txt -o requirements.txt
-        pip install --target=./package -r requirements.txt
-        cd package
-        zip -r9 -g ../package.zip *
+        run: ./build-lambda.sh
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
