@@ -4,7 +4,8 @@ import environ
 env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, '127.0.0.1'),
-    SPOTIFY_POLLING_INTERVAL_SECONDS=(int, 15)
+    SPOTIFY_POLLING_INTERVAL_SECONDS=(int, 15),
+    USE_X_FORWARDED_HOST=(bool, False)
 )
 
 environ.Env.read_env('/usr/src/app/.env')
@@ -22,6 +23,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+USE_X_FORWARDED_HOST = env('USE_X_FORWARDED_HOST')
 
 
 # Application definition
