@@ -11,7 +11,8 @@ jobs:
     steps:
       - name: checkout source code
         uses: actions/checkout@v1
-      - uses: dschep/install-poetry-action@v1.3
+      - name: install poetry
+        uses: dschep/install-poetry-action@v1.3
       - name: zip package
         run: |
         zip -r9 package.zip .  -x ".git/*" -x "terraform/*" -x "package/*"
