@@ -1,11 +1,18 @@
 {% extends "player/base.html" %}
 {% block content %}
 <h2>{{ object.slug }}</h2>
-This room is owned by {{ object.owner }}
+This room is owned by {{ object.owner.get_full_name }}
 <p>Currently playing: {{ object.item_name }}</p>
 {% if request.user.room == object %}
     <a href="{% url 'room-leave' %}">Leave</a>
 {% else %}
     <a href="{% url 'room-join' object.slug %}">Join</a>
 {% endif %}
+<ul>
+{% for user in room.user_set.all %}
+<li>
+    {{ user.get_full_name }}
+</li>
+{% endfor %}
+</ul>
 {% endblock %}
