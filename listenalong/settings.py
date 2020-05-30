@@ -5,7 +5,8 @@ env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, '127.0.0.1'),
     SPOTIFY_POLLING_INTERVAL_SECONDS=(int, 15),
-    USE_X_FORWARDED_HOST=(bool, False)
+    USE_X_FORWARDED_HOST=(bool, False),
+    SECURE_SSL_REDIRECT=(bool, False)
 )
 
 environ.Env.read_env('/usr/src/app/.env')
