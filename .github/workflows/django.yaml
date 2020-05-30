@@ -12,13 +12,17 @@ jobs:
       - name: checkout source code
         uses: actions/checkout@v1
       - uses: dschep/install-poetry-action@v1.3
-      - run: poetry export -f requirements.txt -o requirements.txt
-      - name: Deploy code to Lambda
-        uses: mariamrf/py-lambda-action@v1.0.0
+      - run: |
+        zip -r9 package.zip .  -x ".git/*" -x "terraform/*" -x "package/*"
+        poetry export -r requirements.txt -o requirements.txt
+        pip install --target=./package -r requirements.txt
+        cd package
+        zip -r9 -g ../package.zip *
+      - name: default deploy
+        uses: appleboy/lambda-action@master
         with:
-          lambda_layer_arn: ${{ secrets.AWS_LAMBDA_LAYER_ARN }}
-          lambda_function_name: 'ListenalongDjango'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: ListenalongDjango
+          zip_file: package.zip
