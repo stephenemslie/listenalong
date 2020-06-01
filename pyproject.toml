@@ -13,6 +13,7 @@ tekore = "^1.7.0"
 schedule = "^0.6.0"
 serverless-wsgi = "^1.7.4"
 django-s3-sqlite = "^0.0.3"
+boto3 = "^1.13.19"
 
 [tool.poetry.dev-dependencies]
 ipython = "^7.14.0"
