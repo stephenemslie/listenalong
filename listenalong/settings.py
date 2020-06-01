@@ -1,15 +1,50 @@
 import os
+import json
+
+import boto3
+from botocore.exceptions import ClientError
 import environ
+
 
 env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, '127.0.0.1'),
     SPOTIFY_POLLING_INTERVAL_SECONDS=(int, 15),
     USE_X_FORWARDED_HOST=(bool, False),
-    SECURE_SSL_REDIRECT=(bool, False)
+    SECURE_SSL_REDIRECT=(bool, False),
+    SOCIAL_AUTH_SPOTIFY_KEY=(
+        str, "secret://listenalong-django/SOCIAL_AUTH_SPOTIFY_KEY"),
+    SOCIAL_AUTH_SPOTIFY_SECRET=(
+        str, "secret://listenalong-django/SOCIAL_AUTH_SPOTIFY_SECRET"),
+    SECRET_KEY=(str, "secret://listenalong-django/SOCIAL_AUTH_SPOTIFY_SECRET")
 )
 
 environ.Env.read_env('/usr/src/app/.env')
+
+
+def resolve_secrets(env):
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name='eu-west-1'
+    )
+    for key in env.scheme.keys():
+        value = env(key)
+        if hasattr(value, 'startswith') and value.startswith('secret://'):
+            name = value.split('secret://', 1)[1]
+            secret_name, jsonkey = name.split('/', 1)
+            try:
+                response = client.get_secret_value(SecretId=secret_name)
+                json_value = response['SecretString']
+            except ClientError as e:
+                if e.response['Error']['Code'] == 'ResourceNotFoundException':
+                    print(f"The requested secret {name} was not found")
+                raise
+            secret_value = json.loads(json_value)
+            env.ENVIRON[key] = secret_value[jsonkey]
+
+
+resolve_secrets(env)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
