@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_s3_sqlite',
     'social_django',
     'player',
 ]
@@ -162,7 +163,6 @@ LOGIN_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'player.User'
 
 # Social Auth
-SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 AUTHENTICATION_BACKENDS = [
