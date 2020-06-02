@@ -31,6 +31,15 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := baseTemplate.Clone()
+	t.ParseFiles("templates/login.html")
+	err := t.Execute(w, struct{}{})
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func sessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, _ := sessionStore.Get(r, "listenalong")
@@ -69,6 +78,7 @@ func main() {
 	r := mux.NewRouter()
 	r.Use(sessionMiddleware)
 	r.HandleFunc("/", requiresAuth(indexHandler)).Methods("GET")
+	r.HandleFunc("/login", loginHandler).Methods("GET")
 	http.Handle("/", r)
 	port := os.Getenv("PORT")
 	if port == "" {
