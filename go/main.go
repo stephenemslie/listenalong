@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -22,5 +23,6 @@ func main() {
 		port = "8000"
 	}
 	fmt.Printf("Listening on port %s\n", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), loggedRouter))
 }
