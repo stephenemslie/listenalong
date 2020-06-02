@@ -24,8 +24,7 @@ var (
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := baseTemplate.Clone()
 	t.ParseFiles("templates/index.html")
-	data := struct{}{}
-	err := t.Execute(w, data)
+	err := t.Execute(w, struct{}{})
 	if err != nil {
 		fmt.Println(err)
 	}
