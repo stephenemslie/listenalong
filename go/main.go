@@ -42,6 +42,18 @@ func sessionMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func requiresAuth(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session := r.Context().Value(sessionKey).(*sessions.Session)
+		if session == nil {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+		}
+		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+		}
+	}
+}
+
 func init() {
 	secret := os.Getenv("SECRET")
 	sessionStore = sessions.NewCookieStore([]byte(secret))
@@ -56,7 +68,7 @@ func init() {
 func main() {
 	r := mux.NewRouter()
 	r.Use(sessionMiddleware)
-	r.HandleFunc("/", indexHandler).Methods("GET")
+	r.HandleFunc("/", requiresAuth(indexHandler)).Methods("GET")
 	http.Handle("/", r)
 	port := os.Getenv("PORT")
 	if port == "" {
