@@ -13,12 +13,12 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-type sessionContextType string
+type key int
 
 var (
-	baseTemplate   *template.Template
-	sessionStore   *sessions.CookieStore
-	sessionContext sessionContextType
+	baseTemplate *template.Template
+	sessionStore *sessions.CookieStore
+	sessionKey   key
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -34,13 +34,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 func sessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, _ := sessionStore.Get(r, "listenalong")
-		r = r.WithContext(context.WithValue(r.Context(), sessionContext, session))
+		r = r.WithContext(context.WithValue(r.Context(), sessionKey, session))
 		next.ServeHTTP(w, r)
 	})
 }
 
 func init() {
-	sessionContext = sessionContextType("session")
 	secret := os.Getenv("SECRET")
 	sessionStore = sessions.NewCookieStore([]byte(secret))
 	baseTemplate = template.New("base.html")
