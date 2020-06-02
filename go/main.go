@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -10,8 +11,27 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var (
+	baseTemplate *template.Template
+)
+
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello")
+	t, _ := baseTemplate.Clone()
+	t.ParseFiles("templates/index.html")
+	data := struct{}{}
+	err := t.Execute(w, data)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func init() {
+	baseTemplate = template.New("base.html")
+	var err error
+	baseTemplate, err = baseTemplate.ParseGlob("templates/layout/*.html")
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func main() {
