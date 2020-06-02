@@ -34,6 +34,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 func sessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, _ := sessionStore.Get(r, "listenalong")
+		if session.IsNew {
+			session.Save(r, w)
+		}
 		r = r.WithContext(context.WithValue(r.Context(), sessionKey, session))
 		next.ServeHTTP(w, r)
 	})
