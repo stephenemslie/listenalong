@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"log"
@@ -9,10 +10,15 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 )
 
+type sessionContextType string
+
 var (
-	baseTemplate *template.Template
+	baseTemplate   *template.Template
+	sessionStore   *sessions.CookieStore
+	sessionContext sessionContextType
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +31,18 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func sessionMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, _ := sessionStore.Get(r, "listenalong")
+		r = r.WithContext(context.WithValue(r.Context(), sessionContext, session))
+		next.ServeHTTP(w, r)
+	})
+}
+
 func init() {
+	sessionContext = sessionContextType("session")
+	secret := os.Getenv("SECRET")
+	sessionStore = sessions.NewCookieStore([]byte(secret))
 	baseTemplate = template.New("base.html")
 	var err error
 	baseTemplate, err = baseTemplate.ParseGlob("templates/layout/*.html")
@@ -36,6 +53,7 @@ func init() {
 
 func main() {
 	r := mux.NewRouter()
+	r.Use(sessionMiddleware)
 	r.HandleFunc("/", indexHandler).Methods("GET")
 	http.Handle("/", r)
 	port := os.Getenv("PORT")
