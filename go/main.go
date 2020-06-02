@@ -46,10 +46,10 @@ func requiresAuth(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session := r.Context().Value(sessionKey).(*sessions.Session)
 		if session == nil {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			http.Redirect(w, r, "/login", http.StatusFound)
 		}
 		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			http.Redirect(w, r, "/login", http.StatusFound)
 		}
 	}
 }
