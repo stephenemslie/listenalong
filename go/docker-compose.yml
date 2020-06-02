@@ -9,3 +9,6 @@ services:
       - ./.env
     ports:
       - "8000:8000"
+  dynamodb:
+    init: true
+    image: amazon/dynamodb-local:latest
