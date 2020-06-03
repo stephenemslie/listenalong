@@ -98,6 +98,7 @@ func requiresAuth(fn http.HandlerFunc) http.HandlerFunc {
 		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
 			http.Redirect(w, r, "/login", http.StatusFound)
 		}
+		fn(w, r)
 	}
 }
 
