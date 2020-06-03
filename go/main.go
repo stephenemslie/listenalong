@@ -129,6 +129,7 @@ func init() {
 
 func main() {
 	r := mux.NewRouter()
+	r = r.StrictSlash(true)
 	secret := os.Getenv("SECRET_KEY")
 	r.Use(sessionMiddleware)
 	r.HandleFunc("/", requiresAuth(indexHandler)).Methods("GET")
