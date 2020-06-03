@@ -23,6 +23,7 @@ var (
 	baseTemplate *template.Template
 	sessionStore *sessions.CookieStore
 	sessionKey   key
+	oauthConfig  *oauth2.Config
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
