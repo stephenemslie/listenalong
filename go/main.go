@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"log"
@@ -39,6 +41,21 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func loginInitHandler(w http.ResponseWriter, r *http.Request) {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		fmt.Println("error:", err)
+		return
+	}
+	code := base64.StdEncoding.EncodeToString(b)
+	session := r.Context().Value(sessionKey).(*sessions.Session)
+	session.Values["oauth_state"] = code
+	session.Save(r, w)
+	url := oauthConfig.AuthCodeURL(code)
+	http.Redirect(w, r, url, http.StatusFound)
+}
+
 func sessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, _ := sessionStore.Get(r, "listenalong")
@@ -71,6 +88,19 @@ func init() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	host := os.Getenv("HOST")
+	oauthConfig = &oauth2.Config{
+		ClientID:     os.Getenv("SPOTIFY_KEY"),
+		ClientSecret: os.Getenv("SPOTIFY_SECRET"),
+		RedirectURL:  fmt.Sprintf("%s/complete/spotify/", host),
+		Scopes: []string{
+			"user-read-playback-state",
+			"user-modify-playback-state",
+			"user-read-currently-playing",
+			"playlist-read-collaborative",
+		},
+		Endpoint: spotify.Endpoint,
+	}
 }
 
 func main() {
@@ -78,6 +108,7 @@ func main() {
 	r.Use(sessionMiddleware)
 	r.HandleFunc("/", requiresAuth(indexHandler)).Methods("GET")
 	r.HandleFunc("/login", loginHandler).Methods("GET")
+	r.HandleFunc("/login/spotify/", loginInitHandler).Methods("GET")
 	http.Handle("/", r)
 	port := os.Getenv("PORT")
 	if port == "" {
