@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/gob"
 	"fmt"
 	"html/template"
 	"log"
@@ -59,6 +60,24 @@ func loginInitHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
+func loginCompleteHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	session := ctx.Value(sessionKey).(*sessions.Session)
+	if session.Values["oauth_state"] != r.FormValue("state") {
+		fmt.Println("error: State doesn't match")
+		return
+	}
+	code := r.FormValue("code")
+	tok, err := oauthConfig.Exchange(oauth2.NoContext, code)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	session.Values["spotify_token"] = tok
+	session.Values["authenticated"] = true
+	session.Save(r, w)
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
 func sessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, _ := sessionStore.Get(r, "listenalong")
@@ -104,6 +123,7 @@ func init() {
 		},
 		Endpoint: spotify.Endpoint,
 	}
+	gob.Register(oauth2.Token{})
 }
 
 func main() {
@@ -112,6 +132,7 @@ func main() {
 	r.HandleFunc("/", requiresAuth(indexHandler)).Methods("GET")
 	r.HandleFunc("/login", loginHandler).Methods("GET")
 	r.HandleFunc("/login/spotify/", loginInitHandler).Methods("GET")
+	r.HandleFunc("/complete/spotify/", loginCompleteHandler).Methods("GET")
 	http.Handle("/", r)
 	port := os.Getenv("PORT")
 	if port == "" {
