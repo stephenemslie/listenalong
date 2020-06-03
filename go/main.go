@@ -103,7 +103,7 @@ func requiresAuth(fn http.HandlerFunc) http.HandlerFunc {
 }
 
 func init() {
-	secret := os.Getenv("SECRET")
+	secret := os.Getenv("SECRET_KEY")
 	sessionStore = sessions.NewCookieStore([]byte(secret))
 	baseTemplate = template.New("base.html")
 	var err error
