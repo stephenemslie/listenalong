@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -131,7 +132,9 @@ func main() {
 	r := mux.NewRouter()
 	r = r.StrictSlash(true)
 	secret := os.Getenv("SECRET_KEY")
+	csrfMiddleware := csrf.Protect([]byte(secret[:32]))
 	r.Use(sessionMiddleware)
+	r.Use(csrfMiddleware)
 	r.HandleFunc("/", requiresAuth(indexHandler)).Methods("GET")
 	r.HandleFunc("/login/", loginHandler).Methods("GET")
 	r.HandleFunc("/login/spotify/", loginInitHandler).Methods("GET")
