@@ -129,9 +129,10 @@ func init() {
 
 func main() {
 	r := mux.NewRouter()
+	secret := os.Getenv("SECRET_KEY")
 	r.Use(sessionMiddleware)
 	r.HandleFunc("/", requiresAuth(indexHandler)).Methods("GET")
-	r.HandleFunc("/login", loginHandler).Methods("GET")
+	r.HandleFunc("/login/", loginHandler).Methods("GET")
 	r.HandleFunc("/login/spotify/", loginInitHandler).Methods("GET")
 	r.HandleFunc("/complete/spotify/", loginCompleteHandler).Methods("GET")
 	http.Handle("/", r)
