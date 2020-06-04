@@ -9,8 +9,8 @@ import (
 )
 
 type User struct {
-	UserID string `dynamo:"user_id,hash"`
-	Name   string `dynamo:"name"`
+	ID   string `dynamo:"user_id,hash"`
+	Name string `dynamo:"name"`
 }
 
 type UserService struct {
