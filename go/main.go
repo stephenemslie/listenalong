@@ -22,7 +22,7 @@ var (
 	sessionKey   key
 )
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
+func (env *Env) indexHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := baseTemplate.Clone()
 	t.ParseFiles("templates/index.html")
 	err := t.Execute(w, struct{}{})
