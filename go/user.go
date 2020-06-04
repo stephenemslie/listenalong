@@ -30,6 +30,15 @@ func (u *UserService) CreateUser(user *User) error {
 	return u.userTable.Put(user).Run()
 }
 
+func (u *UserService) GetUser(user *User) error {
+	err := u.userTable.Get("user_id", user.Id).One(user)
+	if err != nil {
+		fmt.Println("get error", err)
+		return err
+	}
+	return nil
+}
+
 func NewUserService(endpoint string) (*UserService, error) {
 	db, dynamoTable, err := newDynamoTable("users", endpoint)
 	if err != nil {
