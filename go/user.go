@@ -24,16 +24,16 @@ func (u *UserService) CreateTable() {
 	}
 }
 
-func NewUserService(endpoint string) (*dynamo.DB, *UserService, error) {
+func NewUserService(endpoint string) (*UserService, error) {
 	db, dynamoTable, err := newDynamoTable("users", endpoint)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	userService := &UserService{
 		db:        db,
 		userTable: dynamoTable,
 	}
-	return db, userService, err
+	return userService, err
 }
 
 func newDynamoTable(tableName, endpoint string) (*dynamo.DB, dynamo.Table, error) {
