@@ -9,7 +9,7 @@ import (
 )
 
 type User struct {
-	ID   string `dynamo:"user_id,hash"`
+	Id   string `dynamo:"user_id,hash"`
 	Name string `dynamo:"name"`
 }
 
@@ -26,7 +26,7 @@ func (u *UserService) CreateTable() {
 }
 
 func (u *UserService) CreateUser(user *User) error {
-	user.ID = xid.New().String()
+	user.Id = xid.New().String()
 	return u.userTable.Put(user).Run()
 }
 
