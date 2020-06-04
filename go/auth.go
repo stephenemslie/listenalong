@@ -21,7 +21,7 @@ type Env struct {
 	userService *UserService
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
+func (env *Env) loginHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := baseTemplate.Clone()
 	t.ParseFiles("templates/login.html")
 	err := t.Execute(w, struct{}{})
@@ -30,7 +30,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func loginInitHandler(w http.ResponseWriter, r *http.Request) {
+func (env *Env) loginInitHandler(w http.ResponseWriter, r *http.Request) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
 	if err != nil {
@@ -45,7 +45,7 @@ func loginInitHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
-func loginCompleteHandler(w http.ResponseWriter, r *http.Request) {
+func (env *Env) loginCompleteHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	session := ctx.Value(sessionKey).(*sessions.Session)
 	if session.Values["oauth_state"] != r.FormValue("state") {
