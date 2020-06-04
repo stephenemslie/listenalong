@@ -24,7 +24,6 @@ type Env struct {
 func (env *Env) indexHandler(w http.ResponseWriter, r *http.Request) {
 	session := r.Context().Value(sessionKey).(*sessions.Session)
 	userID := session.Values["user_id"].(string)
-	fmt.Println("userId", userID)
 	t, _ := baseTemplate.Clone()
 	t.ParseFiles("templates/index.html")
 	user := User{
