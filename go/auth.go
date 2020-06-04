@@ -17,6 +17,10 @@ var (
 	oauthConfig *oauth2.Config
 )
 
+type Env struct {
+	userService *UserService
+}
+
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := baseTemplate.Clone()
 	t.ParseFiles("templates/login.html")
