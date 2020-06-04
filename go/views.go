@@ -21,6 +21,25 @@ type Env struct {
 	userService *UserService
 }
 
+func (env *Env) indexHandler(w http.ResponseWriter, r *http.Request) {
+	session := r.Context().Value(sessionKey).(*sessions.Session)
+	userID := session.Values["user_id"].(string)
+	fmt.Println("userId", userID)
+	t, _ := baseTemplate.Clone()
+	t.ParseFiles("templates/index.html")
+	user := User{
+		Id: userID,
+	}
+	env.userService.GetUser(&user)
+	data := struct {
+		User User
+	}{user}
+	err := t.Execute(w, data)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func (env *Env) loginHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := baseTemplate.Clone()
 	t.ParseFiles("templates/login.html")
@@ -28,6 +47,14 @@ func (env *Env) loginHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func (env *Env) logoutHandler(w http.ResponseWriter, r *http.Request) {
+	session := r.Context().Value(sessionKey).(*sessions.Session)
+	session.Values["authenticated"] = false
+	session.Values["user_id"] = ""
+	session.Save(r, w)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func (env *Env) loginInitHandler(w http.ResponseWriter, r *http.Request) {
@@ -59,6 +86,11 @@ func (env *Env) loginCompleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	session.Values["spotify_token"] = tok
 	session.Values["authenticated"] = true
+	user := User{
+		Name: "test",
+	}
+	env.userService.CreateUser(&user)
+	session.Values["user_id"] = user.Id
 	session.Save(r, w)
 	http.Redirect(w, r, "/", http.StatusFound)
 }

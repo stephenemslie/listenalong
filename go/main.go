@@ -22,15 +22,6 @@ var (
 	sessionKey   key
 )
 
-func (env *Env) indexHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := baseTemplate.Clone()
-	t.ParseFiles("templates/index.html")
-	err := t.Execute(w, struct{}{})
-	if err != nil {
-		fmt.Println(err)
-	}
-}
-
 func sessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, _ := sessionStore.Get(r, "listenalong")
