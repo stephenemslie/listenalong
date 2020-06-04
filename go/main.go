@@ -60,10 +60,20 @@ func main() {
 	csrfMiddleware := csrf.Protect([]byte(secret[:32]))
 	r.Use(sessionMiddleware)
 	r.Use(csrfMiddleware)
-	r.HandleFunc("/", requiresAuth(indexHandler)).Methods("GET")
-	r.HandleFunc("/login/", loginHandler).Methods("GET")
-	r.HandleFunc("/login/spotify/", loginInitHandler).Methods("GET")
-	r.HandleFunc("/complete/spotify/", loginCompleteHandler).Methods("GET")
+	userService, err := NewUserService("http://dynamodb:8000")
+	if err != nil {
+		fmt.Println("error", err)
+		return
+	}
+	userService.CreateTable()
+	env := Env{
+		userService: userService,
+	}
+	r.HandleFunc("/", requiresAuth(env.indexHandler)).Methods("GET")
+	r.HandleFunc("/logout/", env.logoutHandler).Methods("GET")
+	r.HandleFunc("/login/", env.loginHandler).Methods("GET")
+	r.HandleFunc("/login/spotify/", env.loginInitHandler).Methods("GET")
+	r.HandleFunc("/complete/spotify/", env.loginCompleteHandler).Methods("GET")
 	http.Handle("/", r)
 	port := os.Getenv("PORT")
 	if port == "" {
