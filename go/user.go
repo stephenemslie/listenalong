@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/guregu/dynamo"
+	"github.com/rs/xid"
 )
 
 type User struct {
@@ -22,6 +23,11 @@ func (u *UserService) CreateTable() {
 	if err != nil {
 		fmt.Println("error", err)
 	}
+}
+
+func (u *UserService) CreateUser(user *User) error {
+	user.ID = xid.New().String()
+	return u.userTable.Put(user).Run()
 }
 
 func NewUserService(endpoint string) (*UserService, error) {
