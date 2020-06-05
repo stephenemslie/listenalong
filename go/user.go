@@ -8,6 +8,26 @@ import (
 	"github.com/rs/xid"
 )
 
+type SpotifyContext struct {
+	URI  string `json:"uri"`
+	Type string `json:"type"`
+}
+
+type SpotifyItem struct {
+	ID       string `json:"id"`
+	URI      string `json:"uri"`
+	Name     string `json:"name"`
+	Type     string `json:"type"`
+	Duration int    `json:"duration_ms"`
+}
+
+type SpotifyPlaying struct {
+	Context   *SpotifyContext `json:"context"`
+	Item      *SpotifyItem    `json:"item"`
+	Progress  int             `json:"progress_ms"`
+	IsPlaying bool            `json:"is_playing"`
+}
+
 type User struct {
 	Id   string `dynamo:"user_id,hash"`
 	Name string `dynamo:"name"`
