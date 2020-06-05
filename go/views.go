@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -82,13 +83,14 @@ func (env *Env) loginCompleteHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	session := ctx.Value(sessionKey).(*sessions.Session)
 	if session.Values["oauth_state"] != r.FormValue("state") {
-		fmt.Println("error: State doesn't match")
+		http.Error(w, "State doesn't match", 400)
 		return
 	}
 	code := r.FormValue("code")
 	tok, err := env.oauthConfig.Exchange(oauth2.NoContext, code)
 	if err != nil {
-		fmt.Println("error:", err)
+		http.Error(w, "OAuth2 Error", 400)
+		log.Fatal("error:", err)
 	}
 	client := env.oauthConfig.Client(oauth2.NoContext, tok)
 	user, err := NewUserFromSpotify(client)
