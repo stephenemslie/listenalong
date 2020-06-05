@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/guregu/dynamo"
@@ -107,7 +109,9 @@ func (u *UserService) CreateTable() error {
 }
 
 func (u *UserService) CreateUser(user *User) error {
-	user.Id = xid.New().String()
+	now := time.Now()
+	user.CreatedAt = now
+	user.UpdatedAt = now
 	return u.userTable.Put(user).Run()
 }
 
