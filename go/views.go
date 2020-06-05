@@ -74,7 +74,7 @@ func (env *Env) loginInitHandler(w http.ResponseWriter, r *http.Request) {
 	session := r.Context().Value(sessionKey).(*sessions.Session)
 	session.Values["oauth_state"] = code
 	session.Save(r, w)
-	url := oauthConfig.AuthCodeURL(code)
+	url := env.oauthConfig.AuthCodeURL(code)
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
