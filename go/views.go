@@ -86,7 +86,7 @@ func (env *Env) loginCompleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	code := r.FormValue("code")
-	tok, err := oauthConfig.Exchange(oauth2.NoContext, code)
+	tok, err := env.oauthConfig.Exchange(oauth2.NoContext, code)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
