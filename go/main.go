@@ -61,8 +61,8 @@ func main() {
 		return
 	}
 	userService.CreateTable()
-	env := Env{
-		userService: userService,
+	env.userService = userService
+	host := os.Getenv("HOST")
 	env.oauthConfig = &oauth2.Config{
 		ClientID:     os.Getenv("SPOTIFY_KEY"),
 		ClientSecret: os.Getenv("SPOTIFY_SECRET"),
