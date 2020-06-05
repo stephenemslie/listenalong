@@ -115,8 +115,8 @@ func (u *UserService) CreateUser(user *User) error {
 	return u.userTable.Put(user).Run()
 }
 
-func (u *UserService) GetUser(user *User) error {
-	err := u.userTable.Get("user_id", user.Id).One(user)
+func (u *UserService) GetUser(userID string, user *User) error {
+	err := u.userTable.Get("id", userID).One(user)
 	if err != nil {
 		fmt.Println("get error", err)
 		return err
