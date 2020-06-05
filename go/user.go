@@ -1,11 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/guregu/dynamo"
 	"github.com/rs/xid"
+	"io/ioutil"
+	"net/http"
 )
 
 type SpotifyContext struct {
@@ -41,6 +44,23 @@ type User struct {
 	ItemURI      string    `dynamo:"item_uri"`
 	ItemName     string    `dynamo:"item_name"`
 	ItemDuration int       `synamo:"item_duration"`
+}
+
+func NewUserFromSpotify(client *http.Client) (User, error) {
+	res, err := client.Get("https://api.spotify.com/v1/me")
+	user := User{}
+	if err != nil {
+		return user, err
+	}
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return user, err
+	}
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
 }
 
 type UserService struct {
