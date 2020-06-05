@@ -58,7 +58,6 @@ func (env *Env) loginHandler(w http.ResponseWriter, r *http.Request) {
 
 func (env *Env) logoutHandler(w http.ResponseWriter, r *http.Request) {
 	session := r.Context().Value(sessionKey).(*sessions.Session)
-	session.Values["authenticated"] = false
 	session.Values["user_id"] = ""
 	session.Save(r, w)
 	http.Redirect(w, r, "/", http.StatusFound)
@@ -92,7 +91,6 @@ func (env *Env) loginCompleteHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("error:", err)
 	}
 	session.Values["spotify_token"] = tok
-	session.Values["authenticated"] = true
 	user := User{
 		Name: "test",
 	}
@@ -109,7 +107,7 @@ func requiresAuth(fn http.HandlerFunc) http.HandlerFunc {
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
-		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+		if user_id, ok := session.Values["user_id"].(string); !ok || len(user_id) == 0 {
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
