@@ -90,11 +90,13 @@ func (env *Env) loginCompleteHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	user := User{
-		Name: "test",
+	client := env.oauthConfig.Client(oauth2.NoContext, tok)
+	user, err := NewUserFromSpotify(client)
+	err = env.userService.GetOrCreateUser(&user)
+	if err != nil {
+		log.Fatal(err)
 	}
-	env.userService.CreateUser(&user)
-	session.Values["user_id"] = user.Id
+	session.Values["user_id"] = user.ID
 	session.Values["spotify_token"] = tok
 	session.Save(r, w)
 	http.Redirect(w, r, "/", http.StatusFound)
