@@ -33,6 +33,22 @@ func (env *Env) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (env *Env) updatePlayingHandler(w http.ResponseWriter, r *http.Request) {
+	session := r.Context().Value(sessionKey).(*sessions.Session)
+	tok := session.Values["spotify_token"].(oauth2.Token)
+	client := env.oauthConfig.Client(oauth2.NoContext, &tok)
+	user := User{}
+	env.userService.GetUser(session.Values["user_id"].(string), &user)
+	_, err := user.UpdatePlaying(client)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "", 400)
+		return
+	}
+	env.userService.PutUser(&user)
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
 func (env *Env) loginHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := baseTemplate.Clone()
 	t.ParseFiles("templates/login.html")

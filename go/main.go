@@ -77,6 +77,7 @@ func main() {
 	}
 	gob.Register(oauth2.Token{})
 	r.HandleFunc("/", requiresAuth(env.indexHandler)).Methods("GET")
+	r.HandleFunc("/update/", requiresAuth(env.updatePlayingHandler)).Methods("GET")
 	r.HandleFunc("/logout/", env.logoutHandler).Methods("GET")
 	r.HandleFunc("/login/", env.loginHandler).Methods("GET")
 	r.HandleFunc("/login/spotify/", env.loginInitHandler).Methods("GET")
