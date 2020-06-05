@@ -3,22 +3,16 @@ package main
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/gob"
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/spotify"
-)
-
-var (
-	oauthConfig *oauth2.Config
 )
 
 type Env struct {
 	userService *UserService
+	oauthConfig *oauth2.Config
 }
 
 func (env *Env) indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -109,19 +103,5 @@ func requiresAuth(fn http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func init() {
-	host := os.Getenv("HOST")
-	oauthConfig = &oauth2.Config{
-		ClientID:     os.Getenv("SPOTIFY_KEY"),
-		ClientSecret: os.Getenv("SPOTIFY_SECRET"),
-		RedirectURL:  fmt.Sprintf("%s/complete/spotify/", host),
-		Scopes: []string{
-			"user-read-playback-state",
-			"user-modify-playback-state",
-			"user-read-currently-playing",
-			"playlist-read-collaborative",
-		},
-		Endpoint: spotify.Endpoint,
-	}
-	gob.Register(oauth2.Token{})
+func newOauthConfig() {
 }

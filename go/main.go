@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/gob"
 	"fmt"
 	"html/template"
 	"log"
@@ -12,6 +13,8 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/spotify"
 )
 
 type key int
@@ -51,6 +54,7 @@ func main() {
 	csrfMiddleware := csrf.Protect([]byte(secret[:32]))
 	r.Use(sessionMiddleware)
 	r.Use(csrfMiddleware)
+	env := Env{}
 	userService, err := NewUserService("http://dynamodb:8000")
 	if err != nil {
 		fmt.Println("error", err)
@@ -59,7 +63,19 @@ func main() {
 	userService.CreateTable()
 	env := Env{
 		userService: userService,
+	env.oauthConfig = &oauth2.Config{
+		ClientID:     os.Getenv("SPOTIFY_KEY"),
+		ClientSecret: os.Getenv("SPOTIFY_SECRET"),
+		RedirectURL:  fmt.Sprintf("%s/complete/spotify/", host),
+		Scopes: []string{
+			"user-read-playback-state",
+			"user-modify-playback-state",
+			"user-read-currently-playing",
+			"playlist-read-collaborative",
+		},
+		Endpoint: spotify.Endpoint,
 	}
+	gob.Register(oauth2.Token{})
 	r.HandleFunc("/", requiresAuth(env.indexHandler)).Methods("GET")
 	r.HandleFunc("/logout/", env.logoutHandler).Methods("GET")
 	r.HandleFunc("/login/", env.loginHandler).Methods("GET")
