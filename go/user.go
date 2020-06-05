@@ -97,11 +97,13 @@ type UserService struct {
 	userTable dynamo.Table
 }
 
-func (u *UserService) CreateTable() {
+func (u *UserService) CreateTable() error {
 	err := u.db.CreateTable("users", User{}).Run()
 	if err != nil {
 		fmt.Println("error", err)
+		return err
 	}
+	return nil
 }
 
 func (u *UserService) CreateUser(user *User) error {
