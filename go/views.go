@@ -90,12 +90,12 @@ func (env *Env) loginCompleteHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	session.Values["spotify_token"] = tok
 	user := User{
 		Name: "test",
 	}
 	env.userService.CreateUser(&user)
 	session.Values["user_id"] = user.Id
+	session.Values["spotify_token"] = tok
 	session.Save(r, w)
 	http.Redirect(w, r, "/", http.StatusFound)
 }
