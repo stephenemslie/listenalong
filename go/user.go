@@ -62,6 +62,36 @@ func NewUserFromSpotify(client *http.Client) (User, error) {
 	return user, nil
 }
 
+func (u *User) UpdatePlaying(client *http.Client) (bool, error) {
+	res, err := client.Get("https://api.spotify.com/v1/me/player/currently-playing")
+	if err != nil {
+		return false, err
+	}
+	if res.StatusCode == 204 {
+		return false, nil
+	}
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return false, err
+	}
+	spotifyPlaying := SpotifyPlaying{}
+	err = json.Unmarshal(body, &spotifyPlaying)
+	if err != nil {
+		return false, err
+	}
+	now := time.Now()
+	u.UpdatedAt = now
+	u.Playing = spotifyPlaying.IsPlaying
+	u.Progress = spotifyPlaying.Progress
+	u.ContextURI = spotifyPlaying.Context.URI
+	u.ContextType = spotifyPlaying.Context.Type
+	u.ItemID = spotifyPlaying.Item.ID
+	u.ItemURI = spotifyPlaying.Item.URI
+	u.ItemName = spotifyPlaying.Item.Name
+	u.ItemDuration = spotifyPlaying.Item.Duration
+	return true, nil
+}
+
 type UserService struct {
 	db        *dynamo.DB
 	userTable dynamo.Table
