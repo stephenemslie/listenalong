@@ -20,10 +20,8 @@ func (env *Env) indexHandler(w http.ResponseWriter, r *http.Request) {
 	userID := session.Values["user_id"].(string)
 	t, _ := baseTemplate.Clone()
 	t.ParseFiles("templates/index.html")
-	user := User{
-		Id: userID,
-	}
-	env.userService.GetUser(&user)
+	user := User{}
+	env.userService.GetUser(userID, &user)
 	data := struct {
 		User User
 	}{user}
