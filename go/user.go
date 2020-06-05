@@ -124,6 +124,22 @@ func (u *UserService) GetUser(userID string, user *User) error {
 	return nil
 }
 
+func (u *UserService) GetOrCreateUser(user *User) error {
+	err := u.GetUser(user.ID, user)
+	if err != dynamo.ErrNotFound {
+		return err
+	}
+	err = u.CreateUser(user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *UserService) PutUser(user *User) error {
+	return u.userTable.Put(user).Run()
+}
+
 func NewUserService(endpoint string) (*UserService, error) {
 	db, dynamoTable, err := newDynamoTable("users", endpoint)
 	if err != nil {
