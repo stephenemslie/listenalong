@@ -29,8 +29,18 @@ type SpotifyPlaying struct {
 }
 
 type User struct {
-	Id   string `dynamo:"user_id,hash"`
-	Name string `dynamo:"name"`
+	ID           string    `dynamo:"id,hash" json:"id"`
+	Name         string    `dynamo:"name" json:"display_name"`
+	CreatedAt    time.Time `dynamo:"created_at"`
+	UpdatedAt    time.Time `dynamo:"updated_at"`
+	Playing      bool      `dynamo:"is_playing"`
+	Progress     int       `dynamo:"progress_ms"`
+	ContextURI   string    `dynamo:"context_uri"`
+	ContextType  string    `dynamo:"context_type"`
+	ItemID       string    `dynamo:"item_id"`
+	ItemURI      string    `dynamo:"item_uri"`
+	ItemName     string    `dynamo:"item_name"`
+	ItemDuration int       `synamo:"item_duration"`
 }
 
 type UserService struct {
