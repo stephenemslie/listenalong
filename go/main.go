@@ -82,6 +82,7 @@ func main() {
 	r.HandleFunc("/login/", env.loginHandler).Methods("GET")
 	r.HandleFunc("/login/spotify/", env.loginInitHandler).Methods("GET")
 	r.HandleFunc("/complete/spotify/", env.loginCompleteHandler).Methods("GET")
+	r.HandleFunc("/follow/", env.followHandler).Methods("POST")
 	http.Handle("/", r)
 	port := os.Getenv("PORT")
 	if port == "" {
