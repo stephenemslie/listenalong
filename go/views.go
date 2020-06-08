@@ -104,6 +104,23 @@ func (env *Env) loginCompleteHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
+func (env *Env) followHandler(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		fmt.Printf("ParseForm error %v", err)
+	}
+	session := r.Context().Value(sessionKey).(*sessions.Session)
+	userID := session.Values["user_id"].(string)
+	user := User{}
+	env.userService.GetUser(userID, &user)
+	spotifyUsername := r.FormValue("user_id")
+	user.Update
+	env.userService.userTable.
+		Update("id", userID).
+		Set("following_id", spotifyUsername).
+		Run()
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
 func requiresAuth(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session := r.Context().Value(sessionKey).(*sessions.Session)
