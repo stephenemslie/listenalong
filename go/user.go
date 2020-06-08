@@ -34,6 +34,7 @@ type SpotifyPlaying struct {
 
 type User struct {
 	ID           string    `dynamo:"id,hash" json:"id"`
+	Following    string    `dynamo:"following_id"`
 	Name         string    `dynamo:"name" json:"display_name"`
 	CreatedAt    time.Time `dynamo:"created_at"`
 	UpdatedAt    time.Time `dynamo:"updated_at"`
