@@ -113,7 +113,8 @@ func (env *Env) followHandler(w http.ResponseWriter, r *http.Request) {
 	user := User{}
 	env.userService.GetUser(userID, &user)
 	spotifyUsername := r.FormValue("user_id")
-	user.Update
+	spotifyUser := User{}
+	env.userService.GetUser(spotifyUsername, &spotifyUser)
 	env.userService.userTable.
 		Update("id", userID).
 		Set("following_id", spotifyUsername).
