@@ -95,6 +95,42 @@ func (u *User) UpdatePlaying(client *http.Client) (bool, error) {
 	return true, nil
 }
 
+func (u *User) Follow(user *User, client *http.Client) error {
+	type Offset struct {
+		URI string `json:"uri"`
+	}
+	type Play struct {
+		ContextURI string `json:"context_uri"`
+		Offset     Offset `json:"offset"`
+		Position   int    `json:"position_ms"`
+	}
+	options := Play{
+		user.ContextURI,
+		Offset{user.ItemURI},
+		user.AdjustedProgress(),
+	}
+	data, _ := json.Marshal(options)
+	req, _ := http.NewRequest(
+		http.MethodPut,
+		"https://api.spotify.com/v1/me/player/play",
+		bytes.NewBuffer(data),
+	)
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if res.StatusCode != 204 {
+		return fmt.Errorf("Expecting http 204, received %d", res.StatusCode)
+	}
+	return nil
+}
+
+func (u *User) AdjustedProgress() int {
+	elapsed := time.Now().Sub(u.UpdatedAt)
+	return u.Progress + int(elapsed/time.Millisecond) + 2500
+}
+
 type UserService struct {
 	db        *dynamo.DB
 	userTable dynamo.Table

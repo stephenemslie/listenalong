@@ -117,6 +117,7 @@ func (env *Env) followHandler(w http.ResponseWriter, r *http.Request) {
 	spotifyUser := User{}
 	env.userService.GetUser(spotifyUsername, &spotifyUser)
 	client := env.oauthConfig.Client(oauth2.NoContext, &tok)
+	user.Follow(&spotifyUser, client)
 	env.userService.userTable.
 		Update("id", userID).
 		Set("following_id", spotifyUsername).
