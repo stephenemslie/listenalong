@@ -109,12 +109,14 @@ func (env *Env) followHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("ParseForm error %v", err)
 	}
 	session := r.Context().Value(sessionKey).(*sessions.Session)
+	tok := session.Values["spotify_token"].(oauth2.Token)
 	userID := session.Values["user_id"].(string)
 	user := User{}
 	env.userService.GetUser(userID, &user)
 	spotifyUsername := r.FormValue("user_id")
 	spotifyUser := User{}
 	env.userService.GetUser(spotifyUsername, &spotifyUser)
+	client := env.oauthConfig.Client(oauth2.NoContext, &tok)
 	env.userService.userTable.
 		Update("id", userID).
 		Set("following_id", spotifyUsername).
