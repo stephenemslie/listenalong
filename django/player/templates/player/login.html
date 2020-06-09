@@ -1,4 +1,0 @@
-{% extends "player/base.html" %}
-{% block content %}
-<a class="btn btn-success" href="{% url "social:begin" "spotify" %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">Log in with Spotify</a>
-{% endblock %}
