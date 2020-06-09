@@ -1,29 +1,28 @@
-name: django
+name: listenalong
 
 on:
   push:
-    branches: [ master ]
+    branches: [ golang ]
 
 jobs:
   deploy_zip:
-    name: deploy django lambda function
+    name: deploy lambda function
     runs-on: ubuntu-latest
     steps:
       - name: checkout source code
         uses: actions/checkout@v1
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Install Go
+        uses: actions/setup-go@v1
         with:
-          python-version: 3.8
-      - name: install poetry
-        uses: dschep/install-poetry-action@v1.3
-      - name: zip package
-        run: ./build-lambda.sh
+          go-version: 1.14
+      - name: Build binary
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -a -o main main.go && zip deployment.zip main
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
-          function_name: ListenalongDjango
-          zip_file: package.zip
+          function_name: ListenalongAPI
+          zip_file: deployment.zip
