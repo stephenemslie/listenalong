@@ -3,6 +3,8 @@ name: listenalong
 on:
   push:
     branches: [ golang ]
+    paths: 
+      - .github/workflows/lambda.yaml
 
 jobs:
   deploy_zip:
