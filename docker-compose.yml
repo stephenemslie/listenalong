@@ -12,3 +12,7 @@ services:
   dynamodb:
     init: true
     image: amazon/dynamodb-local:latest
+    entrypoint: java
+    command:  ["-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb"]
+    ports:
+      - "8000:8000"
