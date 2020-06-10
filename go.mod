@@ -1,4 +1,4 @@
-module "http://github.com/stephenemslie/listenalong/go"
+module github.com/stephenemslie/listenalong
 
 go 1.12
 
