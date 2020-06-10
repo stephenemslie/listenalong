@@ -1,6 +1,6 @@
 FROM golang:1.14-buster
 WORKDIR /usr/src/app
-COPY go.mod /usr/src/app/go.mod
+COPY go.mod go.sum /usr/src/app/
 RUN go mod download
 RUN go get github.com/githubnemo/CompileDaemon
 COPY . /usr/src/app
